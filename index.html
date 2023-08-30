@@ -46,11 +46,14 @@
 
     .text {
       position: absolute;
-      bottom: 20px;
-      left: 20px;
+      /* bottom: 20px; */
+      top:20px;
+      /* left: 20px; */
       color: white;
       font-size: 18px;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+      display:flex;
+      justify-content: center;
     }
 
     
@@ -81,12 +84,18 @@
     .menu-item:hover {
       background: rgba(255, 255, 255, 0.2);
     }
+    .image.dragging {
+      transition: none;
+    }
   </style>
-  <script>
+   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const container = document.querySelector('.container');
       const image = document.querySelector('.image');
       const menu = document.querySelector('.menu');
+  
+      let isDragging = false;
+      let offsetX, offsetY;
   
       const effects = [
         { name: 'Default', transform: 'rotateX(0deg) rotateY(0deg)' },
@@ -107,7 +116,22 @@
         menu.appendChild(menuItem);
       });
   
-      container.addEventListener('mousemove', (e) => {
+      container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        const containerRect = container.getBoundingClientRect();
+        offsetX = e.clientX - containerRect.left;
+        offsetY = e.clientY - containerRect.top;
+        image.classList.add('dragging');
+      });
+  
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          const containerRect = container.getBoundingClientRect();
+          const x = e.clientX - containerRect.left - offsetX;
+          const y = e.clientY - containerRect.top - offsetY;
+          image.style.left = `${x}px`;
+          image.style.top = `${y}px`;
+        }
         const containerRect = container.getBoundingClientRect();
         const mouseX = (e.clientX - containerRect.left) / containerRect.width - 0.5;
         const mouseY = (e.clientY - containerRect.top) / containerRect.height - 0.5;
@@ -118,6 +142,15 @@
         const flip = `rotateY(${rotateY * 2}deg) rotateX(${rotateX * 2}deg)`;
   
         image.style.transform = flip;
+
+
+      });
+  
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          image.classList.remove('dragging');
+        }
       });
   
       container.addEventListener('mouseleave', () => {
@@ -127,9 +160,11 @@
   </script>
   </head>
   <body>
+    <div class="text">Drag and drop and hover to rotate.</div>
     <div class="container">
+      
       <img class="image" src="img/lightbulb_computer.png" alt="Stunning Image">
-      <div class="text">Hover to Rotate</div>
+      
     </div>
    
     <div class="menu">
