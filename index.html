@@ -41,7 +41,7 @@
       object-fit: cover;
       transform-origin: center center;
       transition: transform 0.4s ease;
-      transform-style: preserve-3d; 
+      /* transform-style: preserve-3d;  */
     }
 
     .text {
@@ -87,18 +87,18 @@
       const container = document.querySelector('.container');
       const image = document.querySelector('.image');
       const menu = document.querySelector('.menu');
-
+  
       const effects = [
         { name: 'Default', transform: 'rotateX(0deg) rotateY(0deg)' },
         { name: 'Effect 1', transform: 'rotateX(30deg) rotateY(45deg)' },
         { name: 'Effect 2', transform: 'rotateX(-15deg) rotateY(-60deg)' },
         { name: 'Effect 3', transform: 'rotateX(60deg) rotateY(-30deg)' }
       ];
-
+  
       const applyEffect = (effect) => {
         image.style.transform = effect.transform;
       };
-
+  
       effects.forEach((effect) => {
         const menuItem = document.createElement('div');
         menuItem.className = 'menu-item';
@@ -106,34 +106,34 @@
         menuItem.addEventListener('click', () => applyEffect(effect));
         menu.appendChild(menuItem);
       });
-
+  
       container.addEventListener('mousemove', (e) => {
         const containerRect = container.getBoundingClientRect();
         const mouseX = (e.clientX - containerRect.left) / containerRect.width - 0.5;
         const mouseY = (e.clientY - containerRect.top) / containerRect.height - 0.5;
-
+  
         const rotateX = mouseY * 30; 
         const rotateY = mouseX * 30; 
-
+  
         const flip = `rotateY(${rotateY * 2}deg) rotateX(${rotateX * 2}deg)`;
-
+  
         image.style.transform = flip;
       });
-
+  
       container.addEventListener('mouseleave', () => {
-        applyEffect(effects[0]); 
+        applyEffect(effects[0]);
       });
     });
   </script>
-</head>
-<body>
-  <div class="container">
-    <img class="image" src="img/lightbulb_computer.png" alt="Stunning Image">
-    <div class="text">Hover to Rotate</div>
-  </div>
- 
-  <div class="menu">
+  </head>
+  <body>
+    <div class="container">
+      <img class="image" src="img/lightbulb_computer.png" alt="Stunning Image">
+      <div class="text">Hover to Rotate</div>
+    </div>
    
-  </div>
-</body>
-</html>
+    <div class="menu">
+     
+    </div>
+  </body>
+  </html>
