@@ -96,6 +96,7 @@
   
       let isDragging = false;
       let offsetX, offsetY;
+      let initialX, initialY;
   
       const effects = [
         { name: 'Default', transform: 'rotateX(0deg) rotateY(0deg)' },
@@ -121,6 +122,8 @@
         const containerRect = container.getBoundingClientRect();
         offsetX = e.clientX - containerRect.left;
         offsetY = e.clientY - containerRect.top;
+        initialX = parseFloat(image.style.left) || 0;
+        initialY = parseFloat(image.style.top) || 0;
         image.classList.add('dragging');
       });
   
@@ -129,8 +132,9 @@
           const containerRect = container.getBoundingClientRect();
           const x = e.clientX - containerRect.left - offsetX;
           const y = e.clientY - containerRect.top - offsetY;
-          image.style.left = `${x}px`;
-          image.style.top = `${y}px`;
+
+          image.style.left = `${initialX + x}px`;
+          image.style.top = `${initialY + y}px`;
         }
         const containerRect = container.getBoundingClientRect();
         const mouseX = (e.clientX - containerRect.left) / containerRect.width - 0.5;
