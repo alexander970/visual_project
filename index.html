@@ -22,26 +22,28 @@
     }
 
     .container {
-      position: relative;
-      width: 586px;
-      height: 405px;
-      perspective: 1000px; 
-      transition: transform 0.4s ease;
-      cursor: grab;
-    }
+    position: relative;
+    width: 973px;
+    height: 405px;
+    perspective: 1000px;
+    transition: transform 0.4s ease;
+    cursor: grab;
+    margin-top: -287px;
+    margin-right: 182px;
+  }
 
     .container:hover {
       transform: rotateY(-20deg) rotateX(20deg); 
     }
 
     .image {
-      position: absolute;
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover;
-      transform-origin: center center;
-      transition: transform 0.4s ease;
-      /* transform-style: preserve-3d;  */
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    transform-origin: center center;
+    transition: transform 0.4s ease;
+  
     }
 
     .text {
@@ -87,54 +89,95 @@
     .image.dragging {
       transition: none;
     }
+
+
+
+    @media (max-width: 767px) {
+      
+    }
+
+
+
+
   </style>
    <script>
-    document.addEventListener('DOMContentLoaded', function() {
+     document.addEventListener('DOMContentLoaded', function() {
       const container = document.querySelector('.container');
-      const image = document.querySelector('.image');
       const menu = document.querySelector('.menu');
-  
+      const images = [
+        { src: 'img/lightbulb_computer.png', alt: 'Stunning Image' },
+        { src: 'img/camera.png', alt: 'Another Image' },
+        { src: 'img/coding.png', alt: 'Yet Another Image' }
+      ];
+
       let isDragging = false;
       let offsetX, offsetY;
       let initialX, initialY;
-  
+      let selectedImage;
+
       const effects = [
         { name: 'Default', transform: 'rotateX(0deg) rotateY(0deg)' },
         { name: 'Effect 1', transform: 'rotateX(30deg) rotateY(45deg)' },
         { name: 'Effect 2', transform: 'rotateX(-15deg) rotateY(-60deg)' },
         { name: 'Effect 3', transform: 'rotateX(60deg) rotateY(-30deg)' }
       ];
-  
-      const applyEffect = (effect) => {
-        image.style.transform = effect.transform;
-      };
-  
-      effects.forEach((effect) => {
+
+      images.forEach((imgData, index) => {
+        const angle = (360 / images.length) * index;
+        const imgElement = document.createElement('img');
+        imgElement.className = 'image';
+        imgElement.src = imgData.src;
+        imgElement.alt = imgData.alt;
+        imgElement.style.zIndex = images.length - index; // Adjust z-index for layering
+
+        const radius = 90; // Adjust this radius for desired circular distance
+        const radians = (angle * Math.PI) / 180;
+        const centerX = container.clientWidth / 2;
+        const centerY = container.clientHeight / 2;
+        const x = centerX + radius * Math.cos(radians);
+        const y = centerY + radius * Math.sin(radians);
+
+        imgElement.style.left = `${x}px`;
+        imgElement.style.top = `${y}px`;
+
+        const rotateZ = -angle; // Rotate the images in 3D orbit
+        imgElement.style.transform = `rotateZ(${rotateZ}deg)`;
+
+        imgElement.addEventListener('click', () => {
+          selectedImage = imgElement;
+          applyEffect(effects[0]);
+        });
+
+        container.appendChild(imgElement);
+
         const menuItem = document.createElement('div');
         menuItem.className = 'menu-item';
-        menuItem.textContent = effect.name;
-        menuItem.addEventListener('click', () => applyEffect(effect));
+        menuItem.textContent = `Image ${index + 1}`;
+        menuItem.addEventListener('click', () => {
+          selectedImage = imgElement;
+          applyEffect(effects[0]);
+        });
         menu.appendChild(menuItem);
       });
-  
+
       container.addEventListener('mousedown', (e) => {
         isDragging = true;
         const containerRect = container.getBoundingClientRect();
         offsetX = e.clientX - containerRect.left;
         offsetY = e.clientY - containerRect.top;
-        initialX = parseFloat(image.style.left) || 0;
-        initialY = parseFloat(image.style.top) || 0;
-        image.classList.add('dragging');
+        initialX = parseFloat(selectedImage.style.left) || 0;
+        initialY = parseFloat(selectedImage.style.top) || 0;
+        selectedImage.classList.add('dragging');
       });
-  
+
       document.addEventListener('mousemove', (e) => {
         if (isDragging) {
           const containerRect = container.getBoundingClientRect();
           const x = e.clientX - containerRect.left - offsetX;
           const y = e.clientY - containerRect.top - offsetY;
 
-          image.style.left = `${initialX + x}px`;
-          image.style.top = `${initialY + y}px`;
+          selectedImage.style.left = `${initialX + x}px`;
+          selectedImage.style.top = `${initialY + y}px`;
         }
         const containerRect = container.getBoundingClientRect();
         const mouseX = (e.clientX - containerRect.left) / containerRect.width - 0.5;
@@ -145,18 +188,16 @@
   
         const flip = `rotateY(${rotateY * 2}deg) rotateX(${rotateX * 2}deg)`;
   
-        image.style.transform = flip;
-
-
+        selectedImage.style.transform = flip;
       });
-  
+
       document.addEventListener('mouseup', () => {
         if (isDragging) {
           isDragging = false;
-          image.classList.remove('dragging');
+          selectedImage.classList.remove('dragging');
         }
       });
-  
+
       container.addEventListener('mouseleave', () => {
         applyEffect(effects[0]);
       });
@@ -165,14 +206,7 @@
   </head>
   <body>
     <div class="text">Drag and drop and hover to rotate.</div>
-    <div class="container">
-      
-      <img class="image" src="img/lightbulb_computer.png" alt="Stunning Image">
-      
-    </div>
-   
-    <div class="menu">
-     
-    </div>
+    <div class="container"></div>
+    <div class="menu"></div>
   </body>
   </html>
